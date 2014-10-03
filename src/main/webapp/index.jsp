@@ -10,7 +10,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Instagrim</title>
+        <title>Picturize</title>
         <link rel="stylesheet" type="text/css" href="Styles.css" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
@@ -18,6 +18,7 @@
         <header>
             <h1>InstaGrim ! </h1>
             <h2>Your world in Black and White</h2>
+            <h1>HEEEY</h1>
         </header>
         <nav>
             <ul>
@@ -46,8 +47,9 @@
         </nav>
         <footer>
             <ul>
-                <li class="footer"><a href="/Instagrim">Home</a></li>
-                <li>&COPY; Andy C</li>
+                <!--<li class="footer"><a href="/Instagrim">Home</a></li>      Changed the link-->
+                <li class="footer"><a href="index.jsp">Home</a></li>
+                <li>&COPY; Eduard Tarassov</li>
             </ul>
         </footer>
     </body>

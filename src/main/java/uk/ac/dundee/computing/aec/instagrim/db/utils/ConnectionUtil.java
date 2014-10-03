@@ -1,0 +1,58 @@
+package uk.ac.dundee.computing.aec.instagrim.db.utils;
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+/**
+ * Created by Eduard on 03/10/2014.
+ */
+public class ConnectionUtil {
+    private static final String DBNAME = "picturizedb";
+    private static final String DB_USERNAME = "root";
+    private static final String DB_PASSWORD = "";
+
+
+    public static Connection getConnection() throws Exception {
+        Connection conn = null;
+        try {
+            String url = "jdbc:mysql://localhost:3306/"+DBNAME+"?user="+DB_USERNAME+"&password="+DB_PASSWORD + "&useUnicode=true&characterEncoding=UTF-8";
+            Class.forName("com.mysql.jdbc.Driver");
+            conn = DriverManager.getConnection(url);
+        } catch (SQLException sqle) {
+            System.out.println("SQLException: Unable to open connection to db: "+sqle.getMessage());
+            throw sqle;
+        } catch(Exception e) {
+            System.out.println("Exception: Unable to open connection to db: "+e.getMessage());
+            throw e;
+        }
+        return conn;
+    }
+
+    /*
+    * The executeQuery can take an insert / update query and execute it. It would internally call getConnection() and closeConnection() to fetch and close a connection.
+     */
+    public static void executeQuery(String strQuery) throws Exception {
+        Connection conn = null;
+
+        try {
+            conn = getConnection();
+            Statement stmt  = conn.createStatement();
+            stmt.executeUpdate(strQuery);
+
+        } catch (SQLException sqle) {
+            System.out.println("SQLException: Unable to execute query : "+strQuery);
+            throw sqle;
+        } catch (Exception e) {
+            System.out.println("Exception: Unable to execute query: "+strQuery);
+            throw e;
+        } finally {
+            conn.close();
+        }
+    }
+
+
+
+}

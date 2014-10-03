@@ -9,13 +9,14 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Instagrim</title>
+        <title>Picturize - Login Page</title>
         <link rel="stylesheet" type="text/css" href="Styles.css" />
 
     </head>
     <body>
+
         <header>
-        <h1>InstaGrim ! </h1>
+        <h1>Picturize!</h1>
         <h2>Your world in Black and White</h2>
         </header>
         <nav>
@@ -27,7 +28,7 @@
        
         <article>
             <h3>Login</h3>
-            <form method="POST"  action="Login">
+            <form method="POST"  action="Login"> <!-- Calling the Login Servlet -->
                 <ul>
                     <li>User Name <input type="text" name="username"></li>
                     <li>Password <input type="password" name="password"></li>

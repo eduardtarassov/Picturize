@@ -14,7 +14,7 @@
     </head>
     <body>
         <header>
-        <h1>InstaGrim ! </h1>
+        <h1>Picturize! </h1>
         <h2>Your world in Black and White</h2>
         </header>
         <nav>
@@ -30,9 +30,15 @@
                 <ul>
                     <li>User Name <input type="text" name="username"></li>
                     <li>Password <input type="password" name="password"></li>
+                    <!--<li>Repeat Password <input type="password" name="password_repeat"></li>-->
+                    <li>First Name <input type="text" name="first_name"></li>
+                    <li>Last Name <input type="text" name="last_name"></li>
+                    <li>Email Address <input type="text" name="email_address"></li>
+                    <li>Secret Question <input type="text" name="secret_question"></li>
+                    <li>Secret Answer <input type="text" name="secret_answer"></li>
                 </ul>
                 <br/>
-                <input type="submit" value="Regidter"> 
+                <input type="submit" value="Register">
             </form>
 
         </article>
