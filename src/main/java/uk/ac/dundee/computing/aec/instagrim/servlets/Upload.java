@@ -40,7 +40,7 @@ import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
 })
 @MultipartConfig
 
-public class Image extends HttpServlet {
+public class Upload extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private Cluster cluster;
@@ -51,7 +51,7 @@ public class Image extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Image() {
+    public Upload() {
         super();
         // TODO Auto-generated constructor stub
         CommandsMap.put("Image", 1);

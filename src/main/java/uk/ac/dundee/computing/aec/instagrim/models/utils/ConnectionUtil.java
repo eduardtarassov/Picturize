@@ -1,4 +1,4 @@
-package uk.ac.dundee.computing.aec.instagrim.db.utils;
+package uk.ac.dundee.computing.aec.instagrim.models.utils;
 
 
 import java.sql.Connection;
@@ -15,6 +15,7 @@ public class ConnectionUtil {
     private static final String DB_PASSWORD = "";
 
 
+
     public static Connection getConnection() throws Exception {
         Connection conn = null;
         try {
@@ -26,6 +27,7 @@ public class ConnectionUtil {
             throw sqle;
         } catch(Exception e) {
             System.out.println("Exception: Unable to open connection to db: "+e.getMessage());
+
             throw e;
         }
         return conn;
@@ -34,11 +36,11 @@ public class ConnectionUtil {
     /*
     * The executeQuery can take an insert / update query and execute it. It would internally call getConnection() and closeConnection() to fetch and close a connection.
      */
-    public static void executeQuery(String strQuery) throws Exception {
-        Connection conn = null;
+    public static void executeQuery(String strQuery, Connection conn) throws Exception {
+        //Connection conn = null;
 
         try {
-            conn = getConnection();
+
             Statement stmt  = conn.createStatement();
             stmt.executeUpdate(strQuery);
 
@@ -47,6 +49,7 @@ public class ConnectionUtil {
             throw sqle;
         } catch (Exception e) {
             System.out.println("Exception: Unable to execute query: "+strQuery);
+            e.printStackTrace();
             throw e;
         } finally {
             conn.close();
