@@ -6,9 +6,15 @@
 
 package uk.ac.dundee.computing.aec.instagrim.servlets;
 
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import uk.ac.dundee.computing.aec.instagrim.models.User;
 import uk.ac.dundee.computing.aec.instagrim.models.utils.ConnectionUtil;
+import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,7 +22,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 
 /**
  * This class handles the Business logic associated with the request.
@@ -25,20 +36,17 @@ import java.io.IOException;
  */
 @WebServlet(name = "Login", urlPatterns = {"/Login"})
 public class Login extends HttpServlet {
-    private static final String DB_NAME = "picturizedb";
-    private static final String DB_USERNAME = "root";
-    private static final String DB_PASSWORD = "";
 
 
     private static final String HOME_PAGE = "/index.jsp";
     private static final String LOGIN_PAGE = "/login.jsp";
 
-    //Cluster cluster = null;
-
+    private DataSource dataSource = null;
+    private Connection conn;
 
     public void init(ServletConfig config) throws ServletException {
-        // TODO Auto-generated method stub
-        // cluster = CassandraHosts.getCluster();
+            // Get DataSource
+            dataSource = ConnectionUtil.getMySQLDataSource();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -49,23 +57,32 @@ public class Login extends HttpServlet {
         User us = new User();
         boolean isValidLogon = false;
         try {
+            conn = dataSource.getConnection();
+            us.setConnection(conn);
             isValidLogon = us.IsValidUser(strUsername, strPassword);
-            if(isValidLogon) {
+            if (isValidLogon) {
                 session.setAttribute("username", strUsername);
             } else {
                 System.out.println("Username or Password is invalid. Please try again.");
             }
-        } catch(Exception e) {
-            System.out.println("Unable to validate user / password in database");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionUtil.close(null, null, conn);
         }
 
 
-
-
         // Maybe it is better to put it into upper if statement
-        if(isValidLogon) {
-            session.setAttribute("Username", strUsername);
-            response.sendRedirect(HOME_PAGE);
+        if (isValidLogon) {
+            LoggedIn lg = new LoggedIn();
+            lg.setLogedin();
+            lg.setUsername(strUsername);
+            //request.setAttribute("LoggedIn", lg);
+
+            session.setAttribute("LoggedIn", lg);
+            System.out.println("Session in servlet " + session);
+            RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
+            rd.forward(request, response);
         } else {
             session.setAttribute("errorMsg", strErrMsg);
             response.sendRedirect(LOGIN_PAGE);

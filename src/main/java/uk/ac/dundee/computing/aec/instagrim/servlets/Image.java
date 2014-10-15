@@ -1,12 +1,15 @@
 package uk.ac.dundee.computing.aec.instagrim.servlets;
 
 import com.datastax.driver.core.Cluster;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -18,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
+import javax.sql.DataSource;
+
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -25,6 +30,7 @@ import org.apache.commons.fileupload.util.Streams;
 import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
 import uk.ac.dundee.computing.aec.instagrim.lib.Convertors;
 import uk.ac.dundee.computing.aec.instagrim.models.PicModel;
+import uk.ac.dundee.computing.aec.instagrim.models.utils.ConnectionUtil;
 import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
 import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
 
@@ -32,26 +38,32 @@ import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
  * Servlet implementation class Image
  */
 @WebServlet(urlPatterns = {
-    "/Image",
-    "/Image/*",
-    "/Thumb/*",
-    "/Images",
-    "/Images/*"
+        "/Image",
+        "/Image/*",
+        "/Thumb/*",
+        "/Images",
+        "/Images/*"
 })
 @MultipartConfig
 
-public class Upload extends HttpServlet {
+public class Image extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private Cluster cluster;
     private HashMap CommandsMap = new HashMap();
-    
-    
+
+    private DataSource dataSource = null;
+    private Connection conn;
+
+
+    public void init(ServletConfig config) throws ServletException {
+        // Get DataSource
+        dataSource = ConnectionUtil.getMySQLDataSource();
+    }
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Upload() {
+    public Image() {
         super();
         // TODO Auto-generated constructor stub
         CommandsMap.put("Image", 1);
@@ -60,9 +72,12 @@ public class Upload extends HttpServlet {
 
     }
 
-    public void init(ServletConfig config) throws ServletException {
-        // TODO Auto-generated method stub
-        cluster = CassandraHosts.getCluster();
+    public void destroy() {
+        try {
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -70,8 +85,10 @@ public class Upload extends HttpServlet {
      * response)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // TODO Auto-generated method stub
+       /* // TODO Auto-generated method stub
+        // Splitting and decoding the request path into arguments.
         String args[] = Convertors.SplitRequestPath(request);
+
         int command;
         try {
             command = (Integer) CommandsMap.get(args[1]);
@@ -91,21 +108,21 @@ public class Upload extends HttpServlet {
                 break;
             default:
                 error("Bad Operator", response);
-        }
+        }*/
     }
 
     private void DisplayImageList(String User, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        PicModel tm = new PicModel();
+        /*PicModel tm = new PicModel();
         tm.setCluster(cluster);
         java.util.LinkedList<Pic> lsPics = tm.getPicsForUser(User);
         RequestDispatcher rd = request.getRequestDispatcher("/UsersPics.jsp");
         request.setAttribute("Pics", lsPics);
-        rd.forward(request, response);
+        rd.forward(request, response);*/
 
     }
 
-    private void DisplayImage(int type,String Image, HttpServletResponse response) throws ServletException, IOException {
-        PicModel tm = new PicModel();
+    private void DisplayImage(int type, String Image, HttpServletResponse response) throws ServletException, IOException {
+       /* PicModel tm = new PicModel();
         tm.setCluster(cluster);
   
         
@@ -122,36 +139,51 @@ public class Upload extends HttpServlet {
         for (int length = 0; (length = input.read(buffer)) > 0;) {
             out.write(buffer, 0, length);
         }
-        out.close();
+        out.close();*/
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+
         for (Part part : request.getParts()) {
             System.out.println("Part Name " + part.getName());
 
             String type = part.getContentType();
             String filename = part.getSubmittedFileName();
-            
+
+            System.out.println("This is the file type: " + type);
+            System.out.println("This is the filename: " + filename);
+
             InputStream is = request.getPart(part.getName()).getInputStream();
             int i = is.available();
-            HttpSession session=request.getSession();
-            LoggedIn lg= (LoggedIn)session.getAttribute("LoggedIn");
-            String username="majed";
-            if (lg.getlogedin()){
-                username=lg.getUsername();
+            HttpSession session = request.getSession();
+            LoggedIn lg = (LoggedIn) session.getAttribute("LoggedIn");
+            String username = "null";
+            if (lg.getlogedin()) {
+                username = lg.getUsername();
+                System.out.println("Current user: " + username);
             }
             if (i > 0) {
                 byte[] b = new byte[i + 1];
                 is.read(b);
                 System.out.println("Length : " + b.length);
                 PicModel tm = new PicModel();
-                tm.setCluster(cluster);
-                tm.insertPic(b, type, filename, username);
+                try {
+                    conn = dataSource.getConnection();
+                    tm.setConnection(conn);
+                    tm.insertPic(b, type, filename, username);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    ConnectionUtil.close(null, null, conn);
+                }
+
+
 
                 is.close();
             }
             RequestDispatcher rd = request.getRequestDispatcher("/upload.jsp");
-             rd.forward(request, response);
+            rd.forward(request, response);
         }
 
     }

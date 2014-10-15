@@ -8,9 +8,87 @@ and open the template in the editor.
     Author     : Administrator
 */
 
-
-nav {
-    text-align: left;
-    border: 2px;
-    float: right;
+body {
+    line-height: 20px;
+    color: #222;
 }
+
+.top-bar .home {
+    position: fixed;
+    width: 100%;
+}
+.root {
+    height: 100%;
+    min-width: 320px;
+}
+
+.page {
+    position: relative;
+    min-height: 100%;
+}
+
+.top-bar {
+    height: 43px;
+    border-bottom: 1px solid #929292;
+    border-bottom-color: rgba(4,40,71,.8);
+    box-shadow: 0 1px 0 rgba(111,151,182,.5)inset,0 -1px 0 rgba(111,151,182,.2)inset,0 1px 1px rgba(0,0,0,.2);
+    background-color: #929292;
+    background-image: url(images-style/noise-1.png);
+    background: -webkit-linear-gradient(top,#ededed,#c7c7c7);
+    background-position: 50% 50%;
+    z-index: 100;
+}
+
+.top-bar-wrapper {
+    position: relative;
+    max-width: 1024px;
+    margin: 0 auto;
+}
+
+.top-bar .logo {
+    height: 35px;
+    width: 97px;
+    background: url(images-style/logo.png) no-repeat 0 4px;
+    position: absolute;
+    top: 4px;
+    margin: 0;
+    text-indent: -9999em;
+}
+
+.logo {
+    position: absolute;
+    left: 50%;
+    margin-left: -50px!important;
+}
+
+.top-bar-left {
+    position: absolute;
+    top: 0;
+}
+
+.top-bar-left .top-bar-actions {
+    float: left;
+    display: inline;
+}
+
+.top-bar-actions .top-bar-home {
+    margin: 0;
+    padding: 0;
+    border-right: 1px solid #929292;
+    border-right-color: rgba(255,255,255,.1);
+    border-left: 1px solid #929292;
+    border-left-color: rgba(0,0,0,.1);
+    height: 44px;
+    width: 44px;
+    text-indent: -9999em;
+    padding: 0!important;
+    background: url(images-style/home-button.png) no-repeat 0 4px;
+
+}
+
+.top-bar-home, .top-bar-home i {
+    height: 44px!important;
+    width: 44px!important;
+    position: absolute;
+}
+

@@ -14,17 +14,48 @@
         <link rel="stylesheet" type="text/css" href="Styles.css" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
-    <body>
+    <body class="home">
+<div class="root">
+    <div class="page">
+<header class="top-bar">
+    <div class="wrapper">
+        <h1 class="logo">
+            <a href="/">Picturize</a>
+        </h1>
+
+        <!--<div class="top-bar-left">
+            <ul class="top-bar-actions">
+<li>
+    <h1 class="top-bar-home active-link">
+        <a href="/">Home button</a>
+    </h1>
+</li>
+            </ul>
+        </div>-->
+    </div>
+</header>
+
+
+
+
+    </div>
+    </div>
+
+
+
+
+
+
+
+
         <header>
-            <h1>InstaGrim ! </h1>
-            <h2>Your world in Black and White</h2>
-            <h1>HEEEY</h1>
+            <h1>InstaGrim</h1>
         </header>
-        <nav>
+        <!--<nav>-->
             <ul>
 
-               
-                <li><a href="upload.jsp">Upload</a></li>
+                <li class="footer"><a href="index.jsp">Home</a></li>
+
                     <%
                         
                         LoggedIn lg = (LoggedIn) session.getAttribute("LoggedIn");
@@ -32,23 +63,24 @@
                             String UserName = lg.getUsername();
                             if (lg.getlogedin()) {
                     %>
-
-                <li><a href="/Instagrim/Images/<%=lg.getUsername()%>">Your Images</a></li>
+                <li><a href="upload.jsp">Upload</a></li>
+                <li><a href="UsersPics.jsp<%=lg.getUsername()%>">Your Images</a></li>
                     <%}
                             }else{
                                 %>
                  <li><a href="register.jsp">Register</a></li>
                 <li><a href="login.jsp">Login</a></li>
+
                 <%
                                         
                             
                     }%>
+                <li><a href="/Instagrim/Images/majed">Sample Images</a></li>
             </ul>
-        </nav>
+        <!--</nav>-->
         <footer>
             <ul>
-                <!--<li class="footer"><a href="/Instagrim">Home</a></li>      Changed the link-->
-                <li class="footer"><a href="index.jsp">Home</a></li>
+                <!--<li class="footer"><a href="index.jsp">Home</a></li>      Changed the link-->
                 <li>&COPY; Eduard Tarassov</li>
             </ul>
         </footer>

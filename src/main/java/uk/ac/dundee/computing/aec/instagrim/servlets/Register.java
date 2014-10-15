@@ -7,6 +7,7 @@
 package uk.ac.dundee.computing.aec.instagrim.servlets;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import javax.servlet.RequestDispatcher;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 
 import uk.ac.dundee.computing.aec.instagrim.models.User;
@@ -31,9 +33,12 @@ public class Register extends HttpServlet {
     private static final String REGISTRATION_PAGE = "/register.jsp";
     private static final String HOME_PAGE = "/index.jsp";
 
+    private DataSource dataSource = null;
+    private Connection conn;
 
     public void init(ServletConfig config) throws ServletException {
-        // TODO Auto-generated method stub
+        // Get DataSource
+        dataSource = ConnectionUtil.getMySQLDataSource();
     }
 
 
@@ -75,17 +80,17 @@ public class Register extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse
             response) throws ServletException, IOException {
 
-       /* String strErrMsg = null;
-        HttpSession session = request.getSession();
-        RequestDispatcher reqDisp = request.getRequestDispatcher(REGISTRATION_PAGE);*/
-
         String[] strRequestParams = generateRequestParams(request);
         User us = new User();
 
         try {
+            conn = dataSource.getConnection();
+            us.setConnection(conn);
             us.registerUser(strRequestParams);
         } catch (Exception e) {
-            System.out.println("Error: Problem with connection.");
+            e.printStackTrace();
+        } finally {
+            ConnectionUtil.close(null, null, conn);
         }
 
         System.out.println("Insert into database successful");

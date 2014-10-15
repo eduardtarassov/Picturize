@@ -9,6 +9,8 @@ package uk.ac.dundee.computing.aec.instagrim.models;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import uk.ac.dundee.computing.aec.instagrim.models.utils.ConnectionUtil;
@@ -22,22 +24,34 @@ import javax.servlet.http.HttpServletRequest;
 public class User {
 
     private static final String LOGIN_QUERY = "select * from users where username=? and password=?";
-    private static final String REGISTER_QUERY_START = "insert into users values ('";
-
+    Connection conn;
 
     public User() {
+    }
+
+    public void setConnection(Connection conn) {
+        this.conn = conn;
     }
 
     public boolean registerUser(String[] strRequestParams) throws SQLException {
         AeSimpleSHA1 sha1handler = new AeSimpleSHA1();
         String encodedPassword = null;
-        Connection conn = null;
-
+        PreparedStatement ps = null;
         if (validateData(strRequestParams[0], strRequestParams[1])) {
             try {
                 strRequestParams[1] = sha1handler.SHA1(strRequestParams[1]);
-                conn = ConnectionUtil.getConnection();
-                ConnectionUtil.executeQuery(generateInsertQuery(strRequestParams), conn);
+
+                String strPsInsertUsr = "INSERT INTO `users`(username, password, first_name, last_name, email_address, secret_question, secret_answer) " +
+                        "VALUES ('" + strRequestParams[0] + "','" + strRequestParams[1] + "','" + strRequestParams[2] +
+                        "','" + strRequestParams[3] + "','" + strRequestParams[4] + "','" + strRequestParams[5] +
+                        "','" + strRequestParams[6] + "')";
+                System.out.println("This is your string: " + strPsInsertUsr);
+                ps = conn.prepareStatement(strPsInsertUsr);
+
+                System.out.println(ps);
+                ps.executeUpdate();
+
+
             } catch (UnsupportedEncodingException | NoSuchAlgorithmException et) {
                 System.out.println("Can't check your password");
                 return false;
@@ -46,6 +60,8 @@ public class User {
                 System.out.println("Error: Problem with connection.");
                 e.printStackTrace();
                 return false;
+            } finally {
+                ConnectionUtil.close(null, ps, null);
             }
         } else {
             System.out.println("ERROR: Username and password cannot be empty!");
@@ -59,7 +75,7 @@ public class User {
         * which will be passed on to the executeQuery method of the ConnectionUtil.
         * Below is the code for the method
          */
-    private String generateInsertQuery(String[] strRequestParams) {
+    /*private String generateInsertQuery(String[] strRequestParams) {
 
         StringBuffer strQuery = new StringBuffer(REGISTER_QUERY_START);
 
@@ -71,11 +87,11 @@ public class User {
                 "', '" + strRequestParams[3] + "', '" + strRequestParams[4] + "', '" + strRequestParams[5] +
                 "', '" + strRequestParams[6] + "')");*/
 
-        System.out.println("Insert query : " + strQuery.toString());
+     /*   System.out.println("Insert query : " + strQuery.toString());
 
         return strQuery.toString();
     }
-
+*/
 
     /**
      * Internally called to validate the request data. This method does a simple
@@ -93,24 +109,28 @@ public class User {
 
 
     public boolean IsValidUser(String strUsername, String strPassword) throws Exception {
+        ResultSet rs = null;
+        PreparedStatement ps = null;
+
         boolean isValid = false;
-        Connection conn = null;
         AeSimpleSHA1 sha1handler = new AeSimpleSHA1();
         String encodedPassword;
+
         try {
             encodedPassword = sha1handler.SHA1(strPassword);
 
-            conn = ConnectionUtil.getConnection();
-            java.sql.PreparedStatement prepStmt = conn.prepareStatement(LOGIN_QUERY);
-            prepStmt.setString(1, strUsername);
-            prepStmt.setString(2, encodedPassword);
-            java.sql.ResultSet rs = prepStmt.executeQuery();
+            ps = conn.prepareStatement(LOGIN_QUERY);
+            ps.setString(1, strUsername);
+            ps.setString(2, encodedPassword);
+            rs = ps.executeQuery();
             if (rs.next()) {
                 System.out.println("User login and password are valid in DB");
                 isValid = true;
             }
         } catch (Exception e) {
-            System.out.println("validateLogon: Error, username or password is incorrect: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            ConnectionUtil.close(rs, ps, null);
         }
 
         return isValid;
