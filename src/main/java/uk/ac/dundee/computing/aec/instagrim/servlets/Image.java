@@ -57,6 +57,7 @@ public class Image extends HttpServlet {
 
     public void init(ServletConfig config) throws ServletException {
         // Get DataSource
+        System.out.println("test2");
         dataSource = ConnectionUtil.getMySQLDataSource();
     }
 
@@ -65,6 +66,8 @@ public class Image extends HttpServlet {
      */
     public Image() {
         super();
+        System.out.println("test2");
+
         // TODO Auto-generated constructor stub
         CommandsMap.put("Image", 1);
         CommandsMap.put("Images", 2);
@@ -84,11 +87,14 @@ public class Image extends HttpServlet {
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      * response)
      */
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-       /* // TODO Auto-generated method stub
+
+      System.out.println("My test 1");
+       // TODO Auto-generated method stub
         // Splitting and decoding the request path into arguments.
         String args[] = Convertors.SplitRequestPath(request);
-
+/*
         int command;
         try {
             command = (Integer) CommandsMap.get(args[1]);
@@ -119,7 +125,7 @@ public class Image extends HttpServlet {
         request.setAttribute("Pics", lsPics);
         rd.forward(request, response);*/
 
-    }
+   }
 
     private void DisplayImage(int type, String Image, HttpServletResponse response) throws ServletException, IOException {
        /* PicModel tm = new PicModel();
@@ -141,9 +147,9 @@ public class Image extends HttpServlet {
         }
         out.close();*/
     }
-
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+System.out.println("TESTT");
 
         for (Part part : request.getParts()) {
             System.out.println("Part Name " + part.getName());
