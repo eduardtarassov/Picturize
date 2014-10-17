@@ -1,6 +1,11 @@
 package uk.ac.dundee.computing.aec.instagrim.servlets;
 
 import com.datastax.driver.core.Cluster;
+import uk.ac.dundee.computing.aec.instagrim.lib.Convertors;
+import uk.ac.dundee.computing.aec.instagrim.models.PicModel;
+import uk.ac.dundee.computing.aec.instagrim.models.utils.ConnectionUtil;
+import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
+import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -11,6 +16,7 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -22,17 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 import javax.sql.DataSource;
-
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.fileupload.util.Streams;
-import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
-import uk.ac.dundee.computing.aec.instagrim.lib.Convertors;
-import uk.ac.dundee.computing.aec.instagrim.models.PicModel;
-import uk.ac.dundee.computing.aec.instagrim.models.utils.ConnectionUtil;
-import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
-import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
 
 /**
  * Servlet implementation class Image
@@ -49,7 +44,7 @@ import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
 public class Image extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private HashMap CommandsMap = new HashMap();
+    private HashMap<String, Integer> CommandsMap = new HashMap<String, Integer>();
 
     private DataSource dataSource = null;
     private Connection conn;
@@ -57,8 +52,8 @@ public class Image extends HttpServlet {
 
     public void init(ServletConfig config) throws ServletException {
         // Get DataSource
-        System.out.println("test2");
         dataSource = ConnectionUtil.getMySQLDataSource();
+
     }
 
     /**
@@ -66,21 +61,12 @@ public class Image extends HttpServlet {
      */
     public Image() {
         super();
-        System.out.println("test2");
 
         // TODO Auto-generated constructor stub
         CommandsMap.put("Image", 1);
         CommandsMap.put("Images", 2);
         CommandsMap.put("Thumb", 3);
 
-    }
-
-    public void destroy() {
-        try {
-            conn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -90,40 +76,54 @@ public class Image extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-      System.out.println("My test 1");
        // TODO Auto-generated method stub
+        System.out.println("This is your request path: " + request);
         // Splitting and decoding the request path into arguments.
         String args[] = Convertors.SplitRequestPath(request);
-/*
-        int command;
-        try {
-            command = (Integer) CommandsMap.get(args[1]);
-        } catch (Exception et) {
-            error("Bad Operator", response);
-            return;
+
+        System.out.println(args[0]);
+
+        for (String name: CommandsMap.keySet()){
+
+            String value = CommandsMap.get(name).toString();
+            System.out.println(name + " ------ " + value);
+
+
         }
-        switch (command) {
-            case 1:
-                DisplayImage(Convertors.DISPLAY_PROCESSED,args[2], response);
+
+        switch (args[0]) {
+            case "Image":
+                DisplayImage(Convertors.DISPLAY_PROCESSED,args[1], response);
                 break;
-            case 2:
-                DisplayImageList(args[2], request, response);
+            case "Images":
+                DisplayImageList(args[1], request, response);
                 break;
-            case 3:
-                DisplayImage(Convertors.DISPLAY_THUMB,args[2],  response);
+            case "Thumb":
+                DisplayImage(Convertors.DISPLAY_THUMB,args[1],  response);
                 break;
             default:
                 error("Bad Operator", response);
-        }*/
+        }
     }
 
     private void DisplayImageList(String User, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        /*PicModel tm = new PicModel();
-        tm.setCluster(cluster);
-        java.util.LinkedList<Pic> lsPics = tm.getPicsForUser(User);
-        RequestDispatcher rd = request.getRequestDispatcher("/UsersPics.jsp");
-        request.setAttribute("Pics", lsPics);
-        rd.forward(request, response);*/
+        System.out.println("Display Image list");
+        PicModel tm = new PicModel();
+        RequestDispatcher rd = null;
+        try {
+            conn = dataSource.getConnection();
+            tm.setConnection(this.conn);
+            LinkedList<Pic> lsPics = tm.getPicsForUser(User);
+             rd = request.getRequestDispatcher("/UsersPics.jsp");
+            request.setAttribute("Pics", lsPics);
+        }  catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionUtil.close(null, null, conn);
+        }
+
+
+        rd.forward(request, response);
 
    }
 
@@ -149,7 +149,6 @@ public class Image extends HttpServlet {
     }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-System.out.println("TESTT");
 
         for (Part part : request.getParts()) {
             System.out.println("Part Name " + part.getName());
