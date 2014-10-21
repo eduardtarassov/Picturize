@@ -14,7 +14,7 @@ import java.io.IOException;
         "/Profile/*",
 })
 
-public class ShowProfile extends HttpServlet {
+public class Profile extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 System.out.println("Here you GO");

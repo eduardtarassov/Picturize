@@ -6,14 +6,10 @@
 
 package uk.ac.dundee.computing.aec.instagrim.servlets;
 
-import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import uk.ac.dundee.computing.aec.instagrim.models.User;
 import uk.ac.dundee.computing.aec.instagrim.models.utils.ConnectionUtil;
-import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
+import uk.ac.dundee.computing.aec.instagrim.stores.LoginState;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -25,8 +21,6 @@ import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 
 /**
@@ -69,12 +63,11 @@ public class Login extends HttpServlet {
 
             // Maybe it is better to put it into upper if statement
             if (isValidLogon) {
-                LoggedIn lg = new LoggedIn();
-                lg.setLogedin();
+                LoginState lg = new LoginState();
+                lg.setLoginState(true);
                 lg.setUsername(strUsername);
 
-                session.setAttribute("LoggedIn", lg);
-                System.out.println("Session in servlet " + session);
+                session.setAttribute("LoginState", lg);
                 RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
                 rd.forward(request, response);
             } else {

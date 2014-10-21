@@ -4,10 +4,6 @@
         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
         version="2.4">
 <description>MySQL Test App</description>
-    <servlet>
-        <servlet-name>ShowProfile</servlet-name>
-        <servlet-class>uk.ac.dundee.computing.aec.instagrim.servlets.ShowProfile</servlet-class>
-    </servlet>
     <resource-ref>
 <description>DB Connection</description>
 <res-ref-name>picturizedb</res-ref-name>

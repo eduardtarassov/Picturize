@@ -18,12 +18,12 @@
         <header>
         <h1>Picturize</h1>
         </header>
-        <nav>
+        <!--<nav>
             <ul>
                 
                 <li><a href="/Instagrim/Images/majed">Sample Images</a></li>
             </ul>
-        </nav>
+        </nav>-->
        
         <article>
             <h3>Login</h3>
