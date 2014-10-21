@@ -45,8 +45,8 @@ public class Login extends HttpServlet {
     private Connection conn;
 
     public void init(ServletConfig config) throws ServletException {
-            // Get DataSource
-            dataSource = ConnectionUtil.getMySQLDataSource();
+        // Get DataSource
+        dataSource = ConnectionUtil.getMySQLDataSource();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -65,27 +65,27 @@ public class Login extends HttpServlet {
             } else {
                 System.out.println("Username or Password is invalid. Please try again.");
             }
+
+
+            // Maybe it is better to put it into upper if statement
+            if (isValidLogon) {
+                LoggedIn lg = new LoggedIn();
+                lg.setLogedin();
+                lg.setUsername(strUsername);
+
+                session.setAttribute("LoggedIn", lg);
+                System.out.println("Session in servlet " + session);
+                RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
+                rd.forward(request, response);
+            } else {
+                session.setAttribute("errorMsg", strErrMsg);
+                response.sendRedirect(LOGIN_PAGE);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             ConnectionUtil.close(null, null, conn);
-        }
-
-
-        // Maybe it is better to put it into upper if statement
-        if (isValidLogon) {
-            LoggedIn lg = new LoggedIn();
-            lg.setLogedin();
-            lg.setUsername(strUsername);
-            //request.setAttribute("LoggedIn", lg);
-
-            session.setAttribute("LoggedIn", lg);
-            System.out.println("Session in servlet " + session);
-            RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
-            rd.forward(request, response);
-        } else {
-            session.setAttribute("errorMsg", strErrMsg);
-            response.sendRedirect(LOGIN_PAGE);
         }
     }
 

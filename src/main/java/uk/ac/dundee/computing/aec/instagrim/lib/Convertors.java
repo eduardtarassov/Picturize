@@ -4,6 +4,8 @@ import java.net.URLDecoder;
 import java.util.StringTokenizer;
 //import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.DatatypeConverter;
+
 import com.eaio.uuid.UUID;
 
 public final class Convertors {
@@ -167,6 +169,14 @@ public final class Convertors {
     private static StringTokenizer SplitString(String str) {
         return new StringTokenizer(str, "/");
 
+    }
+
+    public static String toHexString(byte[] array) {
+        return DatatypeConverter.printHexBinary(array);
+    }
+
+    public static byte[] toByteArray(String s) {
+        return DatatypeConverter.parseHexBinary(s);
     }
 
 }

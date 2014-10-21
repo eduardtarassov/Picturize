@@ -15,39 +15,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body class="home">
-<div class="root">
-    <div class="page">
-<header class="top-bar">
-    <div class="wrapper">
-        <h1 class="logo">
-            <a href="/">Picturize</a>
-        </h1>
-
-        <!--<div class="top-bar-left">
-            <ul class="top-bar-actions">
-<li>
-    <h1 class="top-bar-home active-link">
-        <a href="/">Home button</a>
-    </h1>
-</li>
-            </ul>
-        </div>-->
-    </div>
-</header>
-
-
-
-
-    </div>
-    </div>
-
-
-
-
-
-
-
-
         <header>
             <h1>InstaGrim</h1>
         </header>
@@ -64,7 +31,8 @@
                             if (lg.getlogedin()) {
                     %>
                 <li><a href="upload.jsp">Upload</a></li>
-                <li><a href="UsersPics.jsp<%=lg.getUsername()%>">Your Images</a></li>
+                <li><a href="Images/<%=lg.getUsername()%>">Your Images</a></li>
+
                     <%}
                             }else{
                                 %>

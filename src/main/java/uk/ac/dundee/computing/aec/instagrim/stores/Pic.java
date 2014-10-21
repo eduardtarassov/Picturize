@@ -5,8 +5,8 @@
  */
 package uk.ac.dundee.computing.aec.instagrim.stores;
 
-import com.datastax.driver.core.utils.Bytes;
-import java.nio.ByteBuffer;
+
+import java.sql.Blob;
 
 /**
  *
@@ -14,27 +14,37 @@ import java.nio.ByteBuffer;
  */
 public class Pic {
 
-    private ByteBuffer bImage = null;
+    private Blob bImage = null;
     private int length;
     private String type;
-    private java.util.UUID UUID=null;
+    //private java.util.UUID UUID = null;
+    private String id = null;
     
     public void Pic() {
 
     }
-    public void setUUID(java.util.UUID UUID){
+    /*public void setUUID(java.util.UUID UUID){
         this.UUID =UUID;
     }
     public String getSUUID(){
         return UUID.toString();
+    }*/
+
+    public void setID(String id){
+this.id = id;
     }
-    public void setPic(ByteBuffer bImage, int length,String type) {
+    public String getID(){
+        return this.id;
+    }
+
+    public void setPic(String id, Blob bImage, int length, String type) {
+        this.id = id;
         this.bImage = bImage;
         this.length = length;
         this.type=type;
     }
 
-    public ByteBuffer getBuffer() {
+    public Blob getBlob() {
         return bImage;
     }
 
@@ -44,12 +54,6 @@ public class Pic {
     
     public String getType(){
         return type;
-    }
-
-    public byte[] getBytes() {
-         
-        byte image[] = Bytes.getArray(bImage);
-        return image;
     }
 
 }
