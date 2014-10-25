@@ -21,7 +21,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import uk.ac.dundee.computing.aec.instagrim.stores.LoginState;
+import uk.ac.dundee.computing.aec.instagrim.containers.LoginState;
 
 /**
  *

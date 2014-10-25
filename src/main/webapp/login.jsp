@@ -9,21 +9,15 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Picturize - Login Page</title>
-        <link rel="stylesheet" type="text/css" href="Styles.css" />
+        <title>Picturize - Login</title>
+       <!-- <link rel="stylesheet" type="text/css" href="Styles.css" /> -->
 
     </head>
     <body>
 
         <header>
-        <h1>Picturize</h1>
+            <h2>Picturize - Login</h2>
         </header>
-        <!--<nav>
-            <ul>
-                
-                <li><a href="/Instagrim/Images/majed">Sample Images</a></li>
-            </ul>
-        </nav>-->
        
         <article>
             <h3>Login</h3>

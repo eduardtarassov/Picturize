@@ -4,7 +4,6 @@ package uk.ac.dundee.computing.aec.instagrim.models.utils;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.sql.*;
 
 /**

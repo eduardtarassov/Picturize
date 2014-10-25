@@ -6,17 +6,33 @@
 
 
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
-<%@page import="uk.ac.dundee.computing.aec.instagrim.stores.*" %>
+<%@page import="uk.ac.dundee.computing.aec.instagrim.containers.*" %>
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Picturize</title>
-    <link rel="stylesheet" type="text/css" href="Styles.css"/>
+    <title>Picturize - Home</title>
+    <link rel="stylesheet" type="text/css" href="/Styles.css"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <body class="home">
+
+<div class="search">
+    <form method="POST" action="Search">
+        <table border="0" width="300" align="center" bgcolor="#e9f">
+            <tr><td colspan=2 style="font-size:12pt;" align="center">
+                <h3>Search User</h3></td></tr>
+            <tr><td ><b>User Name</b></td>
+                <td>: <input  type="text" name="pid" id="pid">
+                </td></tr>
+            <tr><td colspan=2 align="center">
+                <input  type="submit" name="submit" value="Search"></td></tr>
+        </table>
+    </form>
+</div>
+
 <header>
-    <h1>Picturize</h1>
+    <h2>Picturize - Home</h2>
 </header>
 <!--<nav>-->
 <ul>
@@ -32,6 +48,7 @@
     %>
     <li><a href="upload.jsp">Upload</a></li>
     <li><a href="Images/<%=lg.getUsername()%>">Your Images</a></li>
+    <li><a href="Profile/<%=lg.getUsername()%>">Your Profile</a></li>
     <li><a href="Logout">Logout</a></li>
     <%
         }
@@ -44,8 +61,8 @@
 
 
         }%>
-    <li><a href="/Instagrim/Images/majed">Sample Images</a></li>
 </ul>
+
 <!--</nav>-->
 <footer>
     <ul>

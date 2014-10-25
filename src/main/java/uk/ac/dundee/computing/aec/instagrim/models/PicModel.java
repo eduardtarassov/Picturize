@@ -12,19 +12,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.UUID;
 import javax.imageio.ImageIO;
 import javax.sql.rowset.serial.SerialBlob;
-import javax.websocket.Session;
 
 import static org.imgscalr.Scalr.*;
 
-import com.datastax.driver.core.BoundStatement;
 import org.imgscalr.Scalr.Method;
 
 import uk.ac.dundee.computing.aec.instagrim.lib.*;
 import uk.ac.dundee.computing.aec.instagrim.models.utils.ConnectionUtil;
-import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
+import uk.ac.dundee.computing.aec.instagrim.containers.Pic;
 
 public class PicModel {
 
@@ -203,8 +200,7 @@ public class PicModel {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            String strPs = "SELECT * FROM userpiclist WHERE user='" + username + "'";
-            ps = conn.prepareStatement(strPs);
+            ps = conn.prepareStatement("SELECT * FROM userpiclist WHERE user='" + username + "'");
 
 
             System.out.println("This is your prepared Statement: " + ps.toString());
@@ -254,7 +250,7 @@ public class PicModel {
                 System.out.println("This is your statement: " + "SELECT image,imagelength,type FROM pics WHERE picid ='" + picid + "'");
 
             } else if (image_type == Convertors.DISPLAY_THUMB) {
-                ps = conn.prepareStatement("SELECT thumb,imagelength,thumblength,type FROM pics WHERE picid = (?)");
+                ps = conn.prepareStatement("SELECT thumb,thumblength,type FROM pics WHERE picid = (?)");
                 System.out.println("This is your statement: " + "SELECT thumb,imagelength,thumblength,type FROM pics WHERE picid ='" + picid + "'");
             } else if (image_type == Convertors.DISPLAY_PROCESSED) {
                 ps = conn.prepareStatement("SELECT processed,processedlength,type FROM pics WHERE picid = (?)");
@@ -265,7 +261,6 @@ public class PicModel {
 
 
             if (rs.first()) {
-                System.out.println("LALALALA");
                 do {
                     if (image_type == Convertors.DISPLAY_IMAGE) {
                         bImage = rs.getBlob("image");
@@ -284,11 +279,10 @@ public class PicModel {
                     bImage = new SerialBlob(bImage);
                     byte[] bdata = bImage.getBytes(1, (int) bImage.length());
                     //String text = new String(bdata);
-                    System.out.print("TEEEEEEST4: ");
-                    for (int r = 0; r < bdata.length; r++) {
+                    /*for (int r = 0; r < bdata.length; r++) {
                         System.out.print(bdata[r]);
                     }
-                    System.out.println();
+                    System.out.println();*/
                 } while (rs.next());
 
             } else {
@@ -308,6 +302,7 @@ public class PicModel {
         System.out.println(bImage.toString());
         System.out.println("This is your retrieved length: " + length);
         System.out.println("This is your retrieved type: " + type);
+
 
 
         Pic p = new Pic();

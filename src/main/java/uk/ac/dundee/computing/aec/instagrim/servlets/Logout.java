@@ -1,6 +1,6 @@
 package uk.ac.dundee.computing.aec.instagrim.servlets;
 
-import uk.ac.dundee.computing.aec.instagrim.stores.LoginState;
+import uk.ac.dundee.computing.aec.instagrim.containers.LoginState;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -33,7 +33,7 @@ public class Logout extends HttpServlet {
         lg.setLoginState(false);
         lg.setUsername("visitor");
         request.setAttribute("LoginState", lg);
-        RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
+        RequestDispatcher rd = request.getRequestDispatcher("logout.jsp");
         rd.forward(request, response);
 
     }

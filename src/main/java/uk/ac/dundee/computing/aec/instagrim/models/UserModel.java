@@ -15,40 +15,54 @@ import java.sql.SQLException;
 
 import uk.ac.dundee.computing.aec.instagrim.models.utils.ConnectionUtil;
 import uk.ac.dundee.computing.aec.instagrim.lib.AeSimpleSHA1;
-
-import javax.servlet.http.HttpServletRequest;
+import uk.ac.dundee.computing.aec.instagrim.stores.LoginState;
 
 /**
  * @author Administrator
  */
-public class User {
+public class UserModel {
 
     private static final String LOGIN_QUERY = "select * from users where username=? and password=?";
     Connection conn;
 
-    public User() {
+    public UserModel() {
     }
 
     public void setConnection(Connection conn) {
         this.conn = conn;
     }
 
-    public boolean registerUser(String[] strRequestParams) throws SQLException {
+
+    /* Registers user. Or updates existing user info*/
+    public boolean registerUser(String[] strRequestParams, boolean initial) throws SQLException {
         AeSimpleSHA1 sha1handler = new AeSimpleSHA1();
         String encodedPassword = null;
         PreparedStatement ps = null;
         if (validateData(strRequestParams[0], strRequestParams[1])) {
             try {
-                strRequestParams[1] = sha1handler.SHA1(strRequestParams[1]);
 
-                String strPsInsertUsr = "INSERT INTO `users`(username, password, first_name, last_name, email_address, secret_question, secret_answer) " +
-                        "VALUES ('" + strRequestParams[0] + "','" + strRequestParams[1] + "','" + strRequestParams[2] +
-                        "','" + strRequestParams[3] + "','" + strRequestParams[4] + "','" + strRequestParams[5] +
-                        "','" + strRequestParams[6] + "')";
-                System.out.println("This is your string: " + strPsInsertUsr);
-                ps = conn.prepareStatement(strPsInsertUsr);
 
-                System.out.println(ps);
+                if (initial) {
+                    strRequestParams[1] = sha1handler.SHA1(strRequestParams[1]);
+                    ps = conn.prepareStatement("INSERT INTO users" +
+                            "(username, password, first_name, last_name, email_address, secret_question, secret_answer) VALUES" +
+                            "(?,?,?,?,?,?,?)");
+
+                } else {
+                    strRequestParams[1] = sha1handler.SHA1(strRequestParams[1]);
+                    ps = conn.prepareStatement("UPDATE users SET password=?, first_name=?, last_name=?, email_address=?, secret_question=?, secret_answer=? WHERE username=?");
+                }
+
+                ps.setString(1, strRequestParams[0]);
+                ps.setString(2, strRequestParams[1]);
+                ps.setString(3, strRequestParams[2]);
+                ps.setString(4, strRequestParams[3]);
+                ps.setString(5, strRequestParams[4]);
+                ps.setString(6, strRequestParams[5]);
+                ps.setString(7, strRequestParams[6]);
+
+
+                System.out.println("This is your ps: " + ps.toString());
                 ps.executeUpdate();
 
 
@@ -135,4 +149,5 @@ public class User {
 
         return isValid;
     }
+
 }

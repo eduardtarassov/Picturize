@@ -6,9 +6,9 @@
 
 package uk.ac.dundee.computing.aec.instagrim.servlets;
 
-import uk.ac.dundee.computing.aec.instagrim.models.User;
+import uk.ac.dundee.computing.aec.instagrim.models.UserModel;
 import uk.ac.dundee.computing.aec.instagrim.models.utils.ConnectionUtil;
-import uk.ac.dundee.computing.aec.instagrim.stores.LoginState;
+import uk.ac.dundee.computing.aec.instagrim.containers.LoginState;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -48,7 +48,7 @@ public class Login extends HttpServlet {
         String strPassword = request.getParameter("password");
         String strErrMsg = null;
         HttpSession session = request.getSession();
-        User us = new User();
+        UserModel us = new UserModel();
         boolean isValidLogon = false;
         try {
             conn = dataSource.getConnection();
