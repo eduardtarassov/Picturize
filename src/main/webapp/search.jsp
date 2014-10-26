@@ -23,10 +23,9 @@
             <b>User Record</b></td>
     </tr>
     <tr style="background-color:lightgrey;">
-        <td><b>User Name</b></td>
-        <td><b>Fisrt Name</b></td>
-        <td><b>Last Name</b></td>
-        <td><b>Email</b></td>
+        <td><b>Username</b></td>
+        <td><b>Profile</b></td>
+        <td><b>Images of user</b></td>
     </tr>
     <%
         int count = 0;
@@ -44,9 +43,9 @@
     %>
     <tr style="background-color:<%=color%>;">
         <td><%=proInfo.getUsername()%></td>
-        <td><%=proInfo.getFirstname()%></td>
-        <td><%=proInfo.getLastname()%></td>
-        <td><%=proInfo.getEmail()%></td>
+        <td><a href="Profile/<%=proInfo.getUsername()%>">Profile</a></td>
+        <td><a href="Images/<%=proInfo.getUsername()%>">Images</a><</td>
+
     </tr>
     <%
             }

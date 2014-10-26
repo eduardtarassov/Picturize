@@ -18,12 +18,12 @@
 <body class="home">
 
 <div class="search">
-    <form method="POST" action="Search">
-        <table border="0" width="300" align="center" bgcolor="#e9f">
+    <form method="POST" action="/Search">
+        <table border="0" width="300" bgcolor="#e9f">
             <tr><td colspan=2 style="font-size:12pt;" align="center">
                 <h3>Search User</h3></td></tr>
             <tr><td ><b>User Name</b></td>
-                <td>: <input  type="text" name="pid" id="pid">
+                <td>: <input  type="text" name="username" id="username">
                 </td></tr>
             <tr><td colspan=2 align="center">
                 <input  type="submit" name="submit" value="Search"></td></tr>
@@ -41,14 +41,15 @@
 
     <%
 
-        LoginState lg = (LoginState) session.getAttribute("LoginState");
-        if (lg != null) {
-            String UserName = lg.getUsername();
-            if (lg.getLoginState()) {
+       // LoginState lg = (LoginState) session.getAttribute("LoginState");
+        if (LoginState.getUsername() != null) {
+            //String UserName = lg.getUsername();
+            if (LoginState.getLoginState()) {
     %>
-    <li><a href="upload.jsp">Upload</a></li>
-    <li><a href="Images/<%=lg.getUsername()%>">Your Images</a></li>
-    <li><a href="Profile/<%=lg.getUsername()%>">Your Profile</a></li>
+    <li><a href="imgUpload.jsp">Upload Images</a></li>
+    <li><a href="vidUpload.jsp">Upload Videos</a></li>
+    <li><a href="Images/<%=LoginState.getUsername()%>">Your Images</a></li>
+    <li><a href="Profile/<%=LoginState.getUsername()%>">Your Profile</a></li>
     <li><a href="Logout">Logout</a></li>
     <%
         }

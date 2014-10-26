@@ -63,11 +63,11 @@ public class Login extends HttpServlet {
 
             // Maybe it is better to put it into upper if statement
             if (isValidLogon) {
-                LoginState lg = new LoginState();
-                lg.setLoginState(true);
-                lg.setUsername(strUsername);
+                LoginState lg;
+                LoginState.setLoginState(true);
+                LoginState.setUsername(strUsername);
 
-                session.setAttribute("LoginState", lg);
+                //session.setAttribute("LoginState", LoginState);
                 RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
                 rd.forward(request, response);
             } else {
