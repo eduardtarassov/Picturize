@@ -15,7 +15,6 @@ import java.sql.SQLException;
 
 import uk.ac.dundee.computing.aec.instagrim.models.utils.ConnectionUtil;
 import uk.ac.dundee.computing.aec.instagrim.lib.AeSimpleSHA1;
-import uk.ac.dundee.computing.aec.instagrim.stores.LoginState;
 
 /**
  * @author Administrator
@@ -49,7 +48,7 @@ public class UserModel {
                             "(?,?,?,?,?,?,?)");
 
                 } else {
-                    strRequestParams[1] = sha1handler.SHA1(strRequestParams[1]);
+                    strRequestParams[0] = sha1handler.SHA1(strRequestParams[0]);
                     ps = conn.prepareStatement("UPDATE users SET password=?, first_name=?, last_name=?, email_address=?, secret_question=?, secret_answer=? WHERE username=?");
                 }
 

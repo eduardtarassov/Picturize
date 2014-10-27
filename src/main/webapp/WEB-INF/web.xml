@@ -9,27 +9,48 @@
         <servlet-name>Profile</servlet-name>
         <servlet-class>uk.ac.dundee.computing.aec.instagrim.servlets.Profile</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>Search</servlet-name>
         <servlet-class>uk.ac.dundee.computing.aec.instagrim.servlets.Search</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Video</servlet-name>
-        <servlet-class>uk.ac.dundee.computing.aec.instagrim.servlets.Video</servlet-class>
+        <servlet-name>Upload</servlet-name>
+        <servlet-class>uk.ac.dundee.computing.aec.instagrim.servlets.Upload</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ImageProcess</servlet-name>
+        <servlet-class>uk.ac.dundee.computing.aec.instagrim.servlets.ImageProcess</servlet-class>
+    </servlet>
+
+    <!-- <servlet>
+         <servlet-name>Video</servlet-name>
+         <servlet-class>uk.ac.dundee.computing.aec.instagrim.servlets.Video</servlet-class>
+     </servlet>-->
+
 
     <servlet-mapping>
         <servlet-name>Profile</servlet-name>
         <url-pattern>/Profile</url-pattern>
     </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>Search</servlet-name>
         <url-pattern>/Search</url-pattern>
     </servlet-mapping>
+
     <servlet-mapping>
-        <servlet-name>Video</servlet-name>
-        <url-pattern>/Video</url-pattern>
+        <servlet-name>Upload</servlet-name>
+        <url-pattern>/Upload</url-pattern>
     </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ImageProcess</servlet-name>
+        <url-pattern>/imageProcess</url-pattern>
+    </servlet-mapping>
+
+
+
 
     <resource-ref>
         <description>DB Connection</description>

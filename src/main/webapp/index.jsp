@@ -37,7 +37,7 @@
 <!--<nav>-->
 <ul>
 
-    <li class="footer"><a href="index.jsp">Home</a></li>
+    <li class="footer"><a href="/index.jsp">Home</a></li>
 
     <%
 
@@ -46,17 +46,16 @@
             //String UserName = lg.getUsername();
             if (LoginState.getLoginState()) {
     %>
-    <li><a href="imgUpload.jsp">Upload Images</a></li>
-    <li><a href="vidUpload.jsp">Upload Videos</a></li>
+    <li><a href="/FileUpload.jsp">Upload Images and Videos</a></li>
     <li><a href="Images/<%=LoginState.getUsername()%>">Your Images</a></li>
     <li><a href="Profile/<%=LoginState.getUsername()%>">Your Profile</a></li>
-    <li><a href="Logout">Logout</a></li>
+    <li><a href="/Logout">Logout</a></li>
     <%
         }
     } else {
     %>
-    <li><a href="register.jsp">Register</a></li>
-    <li><a href="login.jsp">Login</a></li>
+    <li><a href="/register.jsp">Register</a></li>
+    <li><a href="/login.jsp">Login</a></li>
 
     <%
 

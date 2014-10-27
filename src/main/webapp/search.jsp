@@ -44,7 +44,7 @@
     <tr style="background-color:<%=color%>;">
         <td><%=proInfo.getUsername()%></td>
         <td><a href="Profile/<%=proInfo.getUsername()%>">Profile</a></td>
-        <td><a href="Images/<%=proInfo.getUsername()%>">Images</a><</td>
+        <td><a href="Images/<%=proInfo.getUsername()%>">Images</a></td>
 
     </tr>
     <%
