@@ -1,10 +1,8 @@
 package uk.ac.dundee.computing.aec.instagrim.models;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.awt.image.WritableRaster;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.sql.Blob;
 import java.sql.Connection;
@@ -19,6 +17,7 @@ import static org.imgscalr.Scalr.*;
 
 import org.imgscalr.Scalr.Method;
 
+import uk.ac.dundee.computing.aec.instagrim.containers.Comm;
 import uk.ac.dundee.computing.aec.instagrim.lib.*;
 import uk.ac.dundee.computing.aec.instagrim.models.utils.ConnectionUtil;
 import uk.ac.dundee.computing.aec.instagrim.containers.Pic;
@@ -52,37 +51,37 @@ public class PicModel {
             String picid = Convertors.getTimeUUID().toString().replaceAll("-", "");
 
             //The following is a quick and dirty way of doing this, will fill the disk quickly !
-            FileOutputStream output = new FileOutputStream(new File("/var/tmp/instagrim/" + picid));
+          // FileOutputStream output = new FileOutputStream(new File("/var/tmp/instagrim/" + picid));
 
 
-            output.write(imageB);
+           // output.write(imageB);
 
             System.out.println("This is your picid: " + picid);
 
             // System.out.println("This is your imageB: " + imageB);
+            ImageIO.setUseCache(false);
+
+            byte[] thumbB = picresize(imageB, types[1]);
 
 
-            byte[] thumbB = picresize(picid, types[1]);
+            byte[] processedB = picdecolour(imageB, types[1]);
 
-
-            //System.out.println("This is your thumbB: " + thumbB);
-            byte[] processedB = picdecolour(picid, types[1]);
+            byte[] sepiaB = picToSepia(imageB, types[1], 150);
 
 
             Blob image = new SerialBlob(imageB);
+
 
             Blob thumb = new SerialBlob(thumbB);
 
             byte[] bdata = thumb.getBytes(1, (int) thumb.length());
             //String text = new String(bdata);
-            System.out.print("TEEEEEEST3: ");
-            for (int r = 0; r < bdata.length; r++) {
-                System.out.print(bdata[r]);
-            }
-            System.out.println();
+
 
 
             Blob processed = new SerialBlob(processedB);
+            Blob sepia = new SerialBlob(sepiaB);
+
 
             String interaction_time = new Date().toString();
             System.out.println("This is your interaction time: " + interaction_time);
@@ -96,13 +95,16 @@ public class PicModel {
             int processed_length = processedB.length;
             System.out.println("This is your processed in bytes length: " + processed_length);
 
+            int sepia_length = sepiaB.length;
+            System.out.println("This is your sepia in bytes length: " + sepia_length);
+
             System.out.println("This is your type: " + type);
             System.out.println("This is your name: " + name);
 
 
             psInsertPic = conn.prepareStatement("INSERT INTO pics" +
-                    "(picid,image,thumb,processed,user,interactiontime,imagelength,thumblength,processedlength,type,name) VALUES" +
-                    "(?,?,?,?,?,?,?,?,?,?,?)");
+                    "(picid,image,thumb,processed,user,interactiontime,imagelength,thumblength,processedlength,type,name,sepia,sepialength) VALUES" +
+                    "(?,?,?,?,?,?,?,?,?,?,?,?,?)");
             psInsertPic.setString(1, picid);
             psInsertPic.setBlob(2, image);
             psInsertPic.setBlob(3, thumb);
@@ -114,6 +116,8 @@ public class PicModel {
             psInsertPic.setInt(9, processed_length);
             psInsertPic.setString(10, type);
             psInsertPic.setString(11, name);
+            psInsertPic.setBlob(12, sepia);
+            psInsertPic.setInt(13, sepia_length);
             psInsertPic.executeUpdate();
 
 
@@ -135,9 +139,9 @@ public class PicModel {
         }
     }
 
-    public byte[] picresize(String picid, String type) {
+    public byte[] picresize(byte[] imageB, String type) {
         try {
-            BufferedImage BI = ImageIO.read(new File("/var/tmp/instagrim/" + picid));
+            BufferedImage BI = createImageFromBytes(imageB);
             BufferedImage thumbnail = createThumbnail(BI);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(thumbnail, type, baos);
@@ -152,12 +156,81 @@ public class PicModel {
         return null;
     }
 
-    public byte[] picdecolour(String picid, String type) {
+    public byte[] picdecolour(byte[] imageB, String type) {
         try {
-            BufferedImage BI = ImageIO.read(new File("/var/tmp/instagrim/" + picid));
+            BufferedImage BI = createImageFromBytes(imageB);
             BufferedImage processed = createProcessed(BI);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(processed, type, baos);
+            baos.flush();
+            byte[] imageInByte = baos.toByteArray();
+            baos.close();
+            return imageInByte;
+        } catch (IOException et) {
+
+        }
+        return null;
+    }
+
+    public byte[] picToSepia(byte[] imageB, String type, int sepiaIntensity) {
+        try {
+            BufferedImage BI = createImageFromBytes(imageB);
+            BufferedImage sepia = new BufferedImage(BI.getWidth(), BI.getHeight(), BufferedImage.TYPE_INT_RGB);
+            // Play around with this.  20 works well and was recommended
+            //   by another developer. 0 produces black/white image
+            int sepiaDepth = 20;
+
+            int w = BI.getWidth();
+            int h = BI.getHeight();
+
+            WritableRaster raster = sepia.getRaster();
+
+            // We need 3 integers (for R,G,B color values) per pixel.
+            int[] pixels = new int[w * h * 3];
+            BI.getRaster().getPixels(0, 0, w, h, pixels);
+
+            //  Process 3 ints at a time for each pixel.  Each pixel has 3 RGB
+            //    colors in array
+            for (int i = 0; i < pixels.length; i += 3) {
+                int r = pixels[i];
+                int g = pixels[i + 1];
+                int b = pixels[i + 2];
+
+                int gry = (r + g + b) / 3;
+                r = g = b = gry;
+                r = r + (sepiaDepth * 2);
+                g = g + sepiaDepth;
+
+                if (r > 255) {
+                    r = 255;
+                }
+                if (g > 255) {
+                    g = 255;
+                }
+                if (b > 255) {
+                    b = 255;
+                }
+
+                // Darken blue color to increase sepia effect
+                b -= sepiaIntensity;
+
+                // normalize if out of bounds
+                if (b < 0) {
+                    b = 0;
+                }
+                if (b > 255) {
+                    b = 255;
+                }
+
+                pixels[i] = r;
+                pixels[i + 1] = g;
+                pixels[i + 2] = b;
+            }
+            raster.setPixels(0, 0, w, h, pixels);
+
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(sepia, type, baos);
             baos.flush();
             byte[] imageInByte = baos.toByteArray();
             baos.close();
@@ -172,6 +245,15 @@ public class PicModel {
         img = resize(img, Method.SPEED, 250, OP_ANTIALIAS, OP_GRAYSCALE);
         // Let's add a little border before we return result.
         return pad(img, 2);
+    }
+
+    private BufferedImage createImageFromBytes(byte[] imageData) {
+        ByteArrayInputStream bais = new ByteArrayInputStream(imageData);
+        try {
+            return ImageIO.read(bais);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static BufferedImage createProcessed(BufferedImage img) {
@@ -223,6 +305,92 @@ public class PicModel {
         return Pics;
     }
 
+    public LinkedList<Comm> getComments(String picid) {
+        java.util.LinkedList<Comm> Comms = new java.util.LinkedList<>();
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement("SELECT user,text FROM comments WHERE picid=?");
+
+            ps.setString(1, picid);
+            System.out.println("This is your prepared Statement: " + ps.toString());
+            // BoundStatement boundStatement = new BoundStatement(ps);
+            rs = ps.executeQuery(); // this is where the query is executed
+
+            if (rs.first()) {
+                do {
+                    Comm comm = new Comm();
+                    //String UUIDstr = rs.getString("picid");
+                    String username = rs.getString("user");
+                    String text = rs.getString("text");                    //UUID artID = UUID.nameUUIDFromBytes(picid);
+                    //UUID UUID = UUIDb.nameUUIDFromBytes( UUIDb );
+                    //System.out.println("This is your: UUIDb: " + UUID);
+                    //java.util.UUID UUID = rs.getString("picid");
+                    comm.setComment(picid, username, text);
+
+
+                    Comms.add(comm);
+                } while (rs.next());
+
+            } else {
+                System.out.println("No images returned");
+                return null;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionUtil.close(rs, ps, null);
+        }
+
+        return Comms;
+    }
+
+
+    /*public LinkedList<Comm> getComments(String picid) {
+        java.util.LinkedList<Comm> Comms = new java.util.LinkedList<>();
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement("SELECT picid,likes FROM userpiclist WHERE user=?");
+
+            ps.setString(1, username);
+            System.out.println("This is your prepared Statement: " + ps.toString());
+            // BoundStatement boundStatement = new BoundStatement(ps);
+            rs = ps.executeQuery(); // this is where the query is executed
+
+            if (rs.first()) {
+                do {
+                    Pic pic = new Pic();
+                    //String UUIDstr = rs.getString("picid");
+                    String picid = rs.getString("picid");
+                    int likes = rs.getInt("likes");                    //UUID artID = UUID.nameUUIDFromBytes(picid);
+                    System.out.println("This is your picid from userpiclist table: " + picid);
+                    //UUID UUID = UUIDb.nameUUIDFromBytes( UUIDb );
+                    //System.out.println("This is your: UUIDb: " + UUID);
+                    //java.util.UUID UUID = rs.getString("picid");
+                    pic.setLikes(likes);
+                    pic.setID(picid);
+                    pic.setUser(username);
+                    Pics.add(pic);
+                } while (rs.next());
+
+            } else {
+                System.out.println("No images returned");
+                return null;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionUtil.close(rs, ps, null);
+        }
+
+        return Pics;
+    }*/
+
     public Pic getPic(int image_type, String picid) {
         Blob bImage = null;
         String type = null;
@@ -242,6 +410,9 @@ public class PicModel {
             } else if (image_type == Convertors.DISPLAY_PROCESSED) {
                 ps = conn.prepareStatement("SELECT processed,processedlength,type FROM pics WHERE picid = (?)");
                 System.out.println("This is your statement: " + "SELECT processed,processedlength,type WHERE pics WHERE picid = (?)");
+            } else if (image_type == Convertors.DISPLAY_SEPIA) {
+                ps = conn.prepareStatement("SELECT sepia,sepialength,type FROM pics WHERE picid = (?)");
+                System.out.println("This is your statement: " + "SELECT sepia,sepialength,type WHERE pics WHERE picid = (?)");
             }
             ps.setString(1, picid);
             rs = ps.executeQuery();
@@ -262,6 +433,11 @@ public class PicModel {
                         bImage = rs.getBlob("processed");
                         length = rs.getInt("processedlength");
                         System.out.println("DISPLAY PROCESSED");
+                    }
+                    else if (image_type == Convertors.DISPLAY_SEPIA) {
+                        bImage = rs.getBlob("sepia");
+                        length = rs.getInt("sepialength");
+                        System.out.println("DISPLAY SEPIA");
                     }
 
                     type = rs.getString("type");
@@ -308,6 +484,25 @@ public class PicModel {
             ps = conn.prepareStatement("UPDATE userpiclist SET likes=likes+1 WHERE picid = ?");
 
             ps.setString(1, picid);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionUtil.close(null, ps, null);
+        }
+    }
+
+    public void picComment(String comment, String picid, String user) {
+        PreparedStatement ps = null;
+
+        try {
+            ps = conn.prepareStatement("INSERT INTO comments" +
+                    "(picid,user,text) VALUES" +
+                    "(?,?,?)");
+
+            ps.setString(1, picid);
+            ps.setString(2, user);
+            ps.setString(3, comment);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

@@ -22,6 +22,10 @@
         <servlet-name>ImageProcess</servlet-name>
         <servlet-class>uk.ac.dundee.computing.aec.instagrim.servlets.ImageProcess</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Comment</servlet-name>
+        <servlet-class>uk.ac.dundee.computing.aec.instagrim.servlets.Comment</servlet-class>
+    </servlet>
 
     <!-- <servlet>
          <servlet-name>Video</servlet-name>
@@ -47,6 +51,11 @@
     <servlet-mapping>
         <servlet-name>ImageProcess</servlet-name>
         <url-pattern>/imageProcess</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Comment</servlet-name>
+        <url-pattern>/comment</url-pattern>
     </servlet-mapping>
 
 

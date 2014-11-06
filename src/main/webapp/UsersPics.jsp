@@ -34,10 +34,13 @@
 
     %>
     <a href="Image/<%=p.getID()%>"><img src="Thumb/<%=p.getID()%>"></a><br/>
-    <a href="Processed/<%=p.getID()%>">Show Processed image</a>
+    <a href="Processed/<%=p.getID()%>">Show Grey image</a>
 
-    <p>Total likes: <%=p.getLikes()%>
-    </p></br>
+    <a href="Sepia/<%=p.getID()%>">See image in sepia</a>
+    Total likes: <%=p.getLikes()%>
+    <li><a href="Comments/<%=p.getID()%>">Comments of this image</a></li>
+
+    </br>
 
     <% if (!p.getUser().equals(LoginState.getUsername())) { %>
     <form action="/imageProcess" method="Post">
@@ -49,7 +52,18 @@
     </form>
     </br>
     </br>
-    <%
+
+    <form ACTION="/comment" METHOD="POST">
+        Please enter your comment:
+
+        <INPUT TYPE="TEXT" NAME="comment" value="comment here...">
+        <input type="text" name="comment" value="<%=p.getID()%>" style="visibility:hidden">
+        <input type="text" name="comment" value="<%=LoginState.getUsername()%>" style="visibility:hidden">
+        <INPUT TYPE="submit" value="submit" value="Submit comment">
+        </form>
+        </br>
+        </br>
+            <%
                 }
 
 

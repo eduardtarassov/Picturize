@@ -16,6 +16,7 @@ import java.sql.Connection;
 /**
  * Created by Eduard on 26/10/2014.
  */
+
 public class ImageProcess extends HttpServlet {
 
     private DataSource dataSource = null;
@@ -55,5 +56,5 @@ public class ImageProcess extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-    }
+        }
 }

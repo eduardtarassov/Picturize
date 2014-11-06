@@ -5,8 +5,8 @@
       <element id="artifact" artifact-name="Instagrim:war exploded" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="lib">
+          <element id="file-copy" path="$USER_HOME$/Desktop/uuid-3.2.jar" />
           <element id="library" level="project" name="com.mysql.jdbc_5.1.5" />
-          <element id="library" level="project" name="tomcat-dbcp" />
         </element>
       </element>
     </root>
